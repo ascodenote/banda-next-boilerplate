@@ -1,11 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoginForm } from "@/components/form/login-form";
+import { useSearchParams } from "next/navigation";
+import React from "react";
 
 export default function Login() {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
+  const errorMessage = searchParams.get("error");
+  const successMessage = searchParams.get("success");
+
   return (
     <>
       <div className="grid gap-2 text-center">
@@ -15,7 +24,11 @@ export default function Login() {
         </p>
       </div>
       <div className="grid gap-4">
-        <LoginForm />
+        <LoginForm
+          callbackUrl={callbackUrl || undefined} // Mengubah null menjadi undefined
+          errorMessage={errorMessage || undefined} // Mengubah null menjadi undefined
+          successMessage={successMessage || undefined} // Mengubah null menjadi undefined
+        />
       </div>
       <div className="mt-4 text-center text-sm">
         Don&apos;t have an account?{" "}

@@ -17,18 +17,39 @@ import {
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { signIn } from "next-auth/react";
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  callbackUrl?: string; // optional
+  errorMessage?: string; // optional
+  successMessage?: string; // optional
+}
+
+export const LoginForm = ({
+  callbackUrl,
+  errorMessage,
+  successMessage,
+}: LoginFormProps) => {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
     console.log(values);
+    try {
+      await signIn("credentials", {
+        email: values.username,
+        password: values.password,
+        redirect: true,
+        callbackUrl: callbackUrl ?? "/",
+      });
+    } catch (err) {
+      console.error("error login form" + JSON.stringify(err));
+    }
   };
 
   return (
@@ -39,7 +60,7 @@ export const LoginForm = () => {
             <div className="grid gap-2">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
@@ -78,10 +99,10 @@ export const LoginForm = () => {
                   </FormItem>
                 )}
               />
-              {/* <div className="grid gap-2">
-                <FormError message="sadsadas" />
-                <FormSuccess message="Miggguse sdajdsad" />
-              </div> */}
+              <div className="grid gap-2">
+                <FormError message={errorMessage} />
+                <FormSuccess message={successMessage} />
+              </div>
             </div>
             <Button type="submit">Login</Button>
           </div>
