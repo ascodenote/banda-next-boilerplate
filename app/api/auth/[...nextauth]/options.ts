@@ -44,7 +44,7 @@ export const authOptions: NextAuthOptions = {
     async jwt(payload: any) {
       const { token: tokenJWT, user: userJWT, account, trigger } = payload;
       // console.log("JWT FUNTION :", payload);
-      
+
       if (trigger === "signIn" && account.type === "credentials") {
         let user = userJWT.data.user;
         let status = userJWT.status;
@@ -64,13 +64,12 @@ export const authOptions: NextAuthOptions = {
         } catch (error) {
           throw new Error("Error setting up session");
         }
-      }else if(Date.now() < tokenJWT.token.tokenExpires){
-        console.log("User ACTIVE :",Date.now(),tokenJWT.token.tokenExpires)
+      } else if (Date.now() < tokenJWT.token.tokenExpires) {
         return { ...tokenJWT };
-      }else{
-        console.log("User NEED Refersh :",Date.now(),tokenJWT.token.tokenExpires)
-        if (!tokenJWT.token.refreshToken) throw new TypeError("Missing refresh_token")
-        
+      } else {
+        if (!tokenJWT.token.refreshToken)
+          throw new TypeError("Missing refresh_token");
+
         try {
           let payload = {};
           let headers = {
@@ -79,11 +78,10 @@ export const authOptions: NextAuthOptions = {
           };
 
           let ResponseTokenRefresh = await refreshToken(payload, headers);
-          console.log("Refersh Token", ResponseTokenRefresh.status);
 
           if (ResponseTokenRefresh.status === 200) {
             let data = ResponseTokenRefresh.data;
-            console.log("Response Refersh", data);
+
             let token = {
               ...tokenJWT.token,
               accessToken: data.accessToken,
@@ -98,9 +96,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Token refresh failed");
         }
       }
-
-
-
 
       // // TODO: check if the token expired and refresh token
       // const shouldRefreshTime = Math.round(
@@ -146,7 +141,7 @@ export const authOptions: NextAuthOptions = {
       session.user = token.user;
       session.token = token.token;
       session.expires = new Date(session.token.tokenExpires).toISOString();
-console.log("session awal",session)
+      console.log("session awal", session);
       return session;
     },
   },
