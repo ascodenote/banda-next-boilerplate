@@ -21,35 +21,20 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user; // Check if the user is logged in
       const currentUrl = nextUrl.pathname; // Current URL being accessed
 
-      console.log(isLoggedIn, currentUrl);
-
-      // 1. Public URLs are accessible whether logged in or not
       if (publicUrls.includes(currentUrl)) {
         return true;
       }
 
       if (isLoggedIn && authUrls.includes(currentUrl)) {
-        console.log("LOGIN LOGED");
-        nextUrl.pathname = "/"; // Redirect to root
+        // console.log("LOGIN LOGED");
+        return Response.redirect(new URL("/", nextUrl));
       }
 
-      // s;
+      if (!isLoggedIn) {
+        return false;
+      }
+
       return true;
-      // 2. Auth URLs are accessible only if not logged in, otherwise redirect to root (/)
-      // if (authUrls.includes(currentUrl)) {
-      //   if (isLoggedIn) {
-      //     nextUrl.pathname = "/"; // Redirect to root
-      //     return false; // Prevent access to the auth URL
-      //   }
-      //   return true; // Allow access if not logged in
-      // }
-
-      // // 3. Any other URLs are protected and can only be accessed if logged in
-      // if (!isLoggedIn) {
-      //   return false; // Redirect to /login
-      // }
-
-      // return true; // Allow access to protected routes if logged in
     },
     async jwt({ token, user, trigger, session }) {
       if (trigger === "update") {
