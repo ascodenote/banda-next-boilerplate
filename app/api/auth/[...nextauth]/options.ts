@@ -96,45 +96,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Token refresh failed");
         }
       }
-
-      // // TODO: check if the token expired and refresh token
-      // const shouldRefreshTime = Math.round(
-      //   tokenJWT.token.tokenExpires - Date.now()
-      // );
-
-      // console.log("Check For Refersh", shouldRefreshTime);
-
-      // if (shouldRefreshTime < 0) {
-      //   try {
-      //     let payload = {};
-      //     let headers = {
-      //       "Content-Type": "application/json",
-      //       Authorization: tokenJWT.token.refreshToken,
-      //     };
-
-      //     let ResponseTokenRefresh = await refreshToken(payload, headers);
-      //     console.log("Refersh Token", ResponseTokenRefresh.status);
-
-      //     if (ResponseTokenRefresh.status === 200) {
-      //       let data = ResponseTokenRefresh.data;
-      //       console.log("Response Refersh", data);
-      //       let token = {
-      //         accessToken: data.accessToken,
-      //         refreshToken: data.refreshToken,
-      //         tokenExpires: data.expiresIn,
-      //       };
-      //       return {
-      //         ...tokenJWT,
-      //         token,
-      //       };
-      //     }
-      //   } catch (error) {
-      //     throw new Error("Token refresh failed");
-      //   }
-      // }
-
-      // // ** pass the information to the session on normal invocation
-      // return { ...tokenJWT };
     },
     async session({ token, session }) {
       // console.log("Token awal",token)
@@ -146,14 +107,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   jwt: {
-    // A secret to use for key generation (you should set this explicitly)
     secret: process.env.NEXTAUTH_SECRET,
-    // Set to true to use encryption (default: false)
-    // encryption: true,
-    // You can define your own encode/decode functions for signing and encryption
-    // if you want to override the default behaviour.
-    // encode: async ({ secret, token, maxAge }) => {},
-    // decode: async ({ secret, token, maxAge }) => {},
   },
   secret: process.env.NEXTAUTH_SECRET,
   // debug: process.env.NEXTAUTH_DEBUG || false,

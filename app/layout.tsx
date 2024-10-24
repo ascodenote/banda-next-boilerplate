@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Provider>
-          <AppBar />
+          {/* <AppBar /> */}
           <div className={"  min-h-screen "}>{children}</div>
         </Provider>
       </body>
