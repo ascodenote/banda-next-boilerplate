@@ -1,46 +1,14 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { authConfig } from "@/auth.config";
-import { login, refreshToken } from "./services/auth";
+import type { NextAuthConfig } from "next-auth";
+import { refreshToken } from "./services/auth";
 
-const { providers: authConfigProviders, ...authConfigRest } = authConfig;
-
-
-const nextAuth = NextAuth({
-  ...authConfigRest,
-  providers: [
-    ...authConfigProviders,
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials) {
-          throw new Error("Credentials not provided");
-        }
-        const { email, password } = credentials;
-
-        try {
-          // console.log("Credentials",credentials)
-          const user = await login({email, password});
-          
-          if (user) {
-            return user.data; // Return user object on successful login
-          } else {
-            throw new Error("Login failed");
-          }
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            throw new Error(`Login failed: ${error.message}`);
-          } else {
-            throw new Error("Login failed: Unknown error");
-          }
-        }
-      },
-    }),
-  ],
+export const authConfig = {
+  session: { strategy: "jwt" },
+  secret: process.env.AUTH_SECRET,
+  pages: {
+    signIn: "/login",
+    error: "/login", // Error code passed in query string as ?error=
+    verifyRequest: "/login", // (used for check email message)
+  },
   callbacks: {
     authorized({ auth, request }) {
       const { nextUrl } = request;
@@ -51,7 +19,7 @@ const nextAuth = NextAuth({
 
       const isLoggedIn = !!auth?.user; // Check if the user is logged in
       const currentUrl = nextUrl.pathname; // Current URL being accessed
-      console.log("isLoggedIn",isLoggedIn)
+
       if (publicUrls.includes(currentUrl)) {
         return true;
       }
@@ -67,8 +35,8 @@ const nextAuth = NextAuth({
 
       return true;
     },
-    async jwt({ token, user, trigger,account, session }) {
-      // console.log("JWT",{ token, user, trigger,account, session })
+    async jwt({ token, user, trigger, account, session }) {
+      console.log("JWT", { token, user, trigger, account, session });
 
       if (trigger === "signIn" && account?.type === "credentials") {
         let userData = user.user;
@@ -89,7 +57,7 @@ const nextAuth = NextAuth({
         }
       } else if (Date.now() < token.token.tokenExpires) {
         return { ...token };
-      }else {
+      } else {
         if (!token.token.refreshToken)
           throw new TypeError("Missing refresh_token");
 
@@ -119,8 +87,6 @@ const nextAuth = NextAuth({
           throw new Error("Token refresh failed");
         }
       }
-
-      return token;
     },
     signIn({ user, account, profile }) {
       if (account?.provider === "credentials") {
@@ -133,10 +99,9 @@ const nextAuth = NextAuth({
       session.user = token.user;
       session.token = token.token;
       session.expires = new Date(session.token.tokenExpires).toISOString();
-      // console.log("session awal", session);
+      console.log("session awal", session);
       return session;
     },
   },
-});
-
-export const { signIn, signOut, auth, handlers } = nextAuth;
+  providers: [],
+} satisfies NextAuthConfig;

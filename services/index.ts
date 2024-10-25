@@ -1,4 +1,6 @@
-// class API client
+import { auth } from "@/auth";
+
+
 import { getSession } from 'next-auth/react'
 import axios from 'axios'
 import { redirect } from 'next/navigation'
@@ -24,7 +26,9 @@ axios.interceptors.response.use(
 export class ApiClient {
   static baseUrl = process.env.NEXT_PUBLIC_API_URL
   static async get(path: string, headers = {}) {
-    const session = await getSession()
+
+    const session = await auth();
+    console.log(session)
     let config = {
       method: 'get',
       url: this.baseUrl + path,
@@ -38,7 +42,7 @@ export class ApiClient {
   }
 
   static async post(path: string, payload = {}, headers = {}) {
-    const session = await getSession()
+    const session = await auth();
     const data = payload
     let config = {
       method: 'post',
@@ -55,7 +59,7 @@ export class ApiClient {
   }
 
   static async delete(path: string, payload = {}, headers = {}) {
-    const session = await getSession()
+    const session = await auth();
     let data = payload
     let config = {
       method: 'delete',
@@ -72,7 +76,7 @@ export class ApiClient {
   }
 
   static async put(path: string, payload = {}) {
-    const session = await getSession()
+    const session = await auth();
 
     let data = JSON.stringify(payload)
     let config = {
@@ -89,7 +93,7 @@ export class ApiClient {
   }
 
   static async patch(path: string, payload = {}) {
-    const session = await getSession()
+    const session = await auth();
 
     let data = JSON.stringify(payload)
     let config = {

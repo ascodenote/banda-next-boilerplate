@@ -21,7 +21,7 @@ interface IRefreshTokenBody {
 }
 
 export const login = (payload: ILogin) => {
-    // console.log('payload',payload)
+    console.log('payload',payload)
   return ApiClient.post(`/api/auth/login`, payload, {})
 }
 export const getUserInfo = (headers: IUserInfoHeaders) => {

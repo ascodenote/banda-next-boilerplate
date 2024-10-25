@@ -33,16 +33,16 @@ export const LoginForm = ({
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    console.log(values);
+    console.log("HIIIT", values);
     try {
       await signIn("credentials", {
-        email: values.username,
+        email: values.email,
         password: values.password,
         redirect: true,
         callbackUrl: callbackUrl ?? "/",
@@ -60,7 +60,7 @@ export const LoginForm = ({
             <div className="grid gap-2">
               <FormField
                 control={form.control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
