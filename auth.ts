@@ -5,7 +5,6 @@ import { login, refreshToken } from "./services/auth";
 
 const { providers: authConfigProviders, ...authConfigRest } = authConfig;
 
-
 const nextAuth = NextAuth({
   ...authConfigRest,
   providers: [
@@ -24,8 +23,8 @@ const nextAuth = NextAuth({
 
         try {
           // console.log("Credentials",credentials)
-          const user = await login({email, password});
-          
+          const user = await login({ email, password });
+
           if (user) {
             return user.data; // Return user object on successful login
           } else {
@@ -42,32 +41,32 @@ const nextAuth = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ auth, request }) {
-      const { nextUrl } = request;
+    // authorized({ auth, request }) {
+    //   const { nextUrl } = request;
 
-      // Define public and auth URLs
-      const publicUrls = ["/about", "/contact"]; // Public routes
-      const authUrls = ["/login", "/register"]; // Authentication routes
+    //   // Define public and auth URLs
+    //   const publicUrls = ["/about", "/contact"]; // Public routes
+    //   const authUrls = ["/login", "/register"]; // Authentication routes
 
-      const isLoggedIn = !!auth?.user; // Check if the user is logged in
-      const currentUrl = nextUrl.pathname; // Current URL being accessed
-      console.log("isLoggedIn",isLoggedIn)
-      if (publicUrls.includes(currentUrl)) {
-        return true;
-      }
+    //   const isLoggedIn = !!auth?.user; // Check if the user is logged in
+    //   const currentUrl = nextUrl.pathname; // Current URL being accessed
+    //   console.log("isLoggedIn",isLoggedIn)
+    //   if (publicUrls.includes(currentUrl)) {
+    //     return true;
+    //   }
 
-      if (isLoggedIn && authUrls.includes(currentUrl)) {
-        // console.log("LOGIN LOGED");
-        return Response.redirect(new URL("/", nextUrl));
-      }
+    //   if (isLoggedIn && authUrls.includes(currentUrl)) {
+    //     // console.log("LOGIN LOGED");
+    //     return Response.redirect(new URL("/", nextUrl));
+    //   }
 
-      if (!isLoggedIn) {
-        return false;
-      }
+    //   if (!isLoggedIn) {
+    //     return false;
+    //   }
 
-      return true;
-    },
-    async jwt({ token, user, trigger,account, session }) {
+    //   return true;
+    // },
+    async jwt({ token, user, trigger, account, session }) {
       // console.log("JWT",{ token, user, trigger,account, session })
 
       if (trigger === "signIn" && account?.type === "credentials") {
@@ -82,14 +81,14 @@ const nextAuth = NextAuth({
         try {
           return {
             token,
-            user:userData,
+            user: userData,
           };
         } catch (error) {
           throw new Error("Error setting up session");
         }
       } else if (Date.now() < token.token.tokenExpires) {
         return { ...token };
-      }else {
+      } else {
         if (!token.token.refreshToken)
           throw new TypeError("Missing refresh_token");
 
