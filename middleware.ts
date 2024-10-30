@@ -26,8 +26,12 @@ export default auth((req: NextRequest) => {
 
   // Daftar subdomain yang diizinkan tanpa pengecekan auth
   const allowedSubdomains = ["test1", "test2"];
-  // console.log(customSubDomain);
+  // console.log(currentUrl);
   if (publicUrls.includes(currentUrl)) {
+    return NextResponse.next();
+  }
+
+  if (authUrls.includes(currentUrl)) {
     return NextResponse.next();
   }
 
@@ -84,9 +88,14 @@ export default auth((req: NextRequest) => {
       );
     } else {
       // Jika customSubDomain tidak ada dalam daftar yang diizinkan, return 404
-      console.log("Subdomain tidak dikenal, return 404");
-      return NextResponse.rewrite(new URL("/not-found", req.url));
-      // return notFound();
+      // console.log("Subdomain tidak dikenal, return 404");
+      // return NextResponse.rewrite(new URL("/not-found", req.url));
+      return NextResponse.rewrite(
+        new URL(
+          `/not-found${nextUrl.pathname === "/" ? "" : nextUrl.pathname}`,
+          req.url
+        )
+      );
     }
   }
 
