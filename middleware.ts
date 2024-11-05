@@ -105,14 +105,5 @@ export default auth((req: NextRequest) => {
 });
 
 export const config = {
-  matcher: [
-    /*
-     * Cocokkan semua jalur kecuali:
-     * 1. Rute /api
-     * 2. Rute /_next (bagian internal Next.js)
-     * 3. Rute /_static (di dalam folder /public)
-     * 4. Semua file root di dalam folder /public (misalnya, /favicon.ico)
-     */
-    "/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
-  ],
+  matcher: ["/((?!api/|_next/|_vercel|images/|static/|[\\w-]+\\.\\w+$).*)"],
 };
